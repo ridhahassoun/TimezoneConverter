@@ -25,3 +25,6 @@ CREATE TABLE Sets(
     exercise_id INT NOT NULL,
     FOREIGN KEY(workout_id, exercise_id) REFERENCES Workout_Exercise(workout_id, exercise_id) ON UPDATE CASCADE ON DELETE CASCADE
 );
+-- Insert Exercises into Exercise table
+INSERT INTO Exercises(exercise_name)
+VALUES('Chest Press'),('Lat Pulldown'),('Pectoral Fly'),('Biceps Curl'),('Triceps Press'),('Shoulder Press'),('Row'),('Leg Press'),('Leg Extension'),('Leg Curl'),('Calf Raise'),('Hip Abduction'),('Hip Adduction')
