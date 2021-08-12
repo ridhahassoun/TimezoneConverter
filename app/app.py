@@ -18,3 +18,16 @@ def index():
 @app.route("/workout_new")
 def workout_new():
     return render_template("workout_new.html")
+
+
+@app.route("/list_of_exercises")
+def list_of_exercises():
+    cursor = database.get_db().cursor()
+    cursor.execute("SELECT * FROM Exercises")
+    result = cursor.fetchall()
+
+    data = {}
+    for (id, exercise) in result:
+        data[str(id)] = exercise
+
+    return data
