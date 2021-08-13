@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}View Previous Workouts{% endblock %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+{% block header %}Workout Tracker 5000{% endblock %}
+{% block content %}
+    <h4>Previous Workouts</h4>
+    <div class="list-group">
+        {% for workout in workouts %}
+        <a href="/workout/{{ workout[0] }}" class="list-group-item list-group-item-action">
+            Workout {{ workout[0 ]}} on {{ workout[1] }}
+        </a>
+        {% else %}
+        <p>There are no workouts! Why don't you start one?</p>
+        {% endfor %}
+    </div>
+    <p></p>
+    <a class="d-inline-block btn btn-warning btn-lg" href="/" role="button">go back</a>
+{% endblock %}

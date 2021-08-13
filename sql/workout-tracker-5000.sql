@@ -2,6 +2,7 @@
 CREATE TABLE Workouts(
     workout_id INT AUTO_INCREMENT PRIMARY KEY,
     workout_duration INT NOT NULL
+    workout_date DATE DEFAULT(CURRENT_DATE)
 );
 -- Build Exercises Table
 CREATE TABLE Exercises(

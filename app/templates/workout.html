@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}View Workout{% endblock %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+{% block header %}Workout Tracker 5000{% endblock %}
+{% block content %}
+    <h4>Workout {{ id }}</h4>
+    <div class="text-start">
+        <p>Duration: {{ duration[0] }}:{{ duration[1] }}:{{ duration[2] }}</p>
+        <p>Date: {{ date }}</p>
+        {% for exercise in exercises %}
+        <h6>{{ exercise[1] }}</h6>
+        <ul class="list-group">
+            {% for set in sets if set[0] == exercise[0] %}
+            <li class="list-group-item">Set {{ loop.index }}: {{ set[1] }} reps, {{ set[2] }} lbs</li>
+            {% endfor %}
+        </ul>
+        {% endfor %}
+    </div>
+    <p></p>
+    <a class="d-inline-block btn btn-warning btn-lg" href="/workouts" role="button">go back</a>
+{% endblock %}
