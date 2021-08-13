@@ -6,7 +6,7 @@
 {% endblock %}
 {% block header %}00:00:00{% endblock %}
 {% block content %}
-            <form>
+            <form method="POST" action="/save_workout" id="workout">
                 <input type="hidden" name="duration" id="duration" value="0">
                 <ul class="list-group text-start" id="exercises">
                 </ul>

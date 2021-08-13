@@ -6,6 +6,7 @@ var list_of_exercises = {};
 function setUp() {
     startTimer();
     bindAddButton();
+    bindCompleteButton();
 
     let req = new XMLHttpRequest();
     req.open("GET", "/list_of_exercises");
@@ -61,6 +62,14 @@ function bindAddButton() {
     });
 }
 
+function bindCompleteButton() {
+    document.getElementById("complete").addEventListener("click", (event) => {
+        document.getElementById("workout").submit();
+
+        event.preventDefault();
+    });
+}
+
 function bindList() {
     document.getElementById("exercises").addEventListener("click", (event) => {
         let target = event.target;
@@ -83,7 +92,7 @@ function bindList() {
 
         if (target.name == "add_set") {
             let rows = document.getElementById(`exercise-${which_exercise}-sets`);
-            rows.appendChild(buildSetRow(which_exercise, exercises[which_exercise]));
+            rows.appendChild(buildSetRow(which_exercise, exercises[which_exercise] + 1));
 
             exercises[which_exercise] = rows.children.length;
 
@@ -120,10 +129,6 @@ function buildExerciseForm(exercise_number) {
     let select = document.createElement("select");
     select.className = "form-select";
     select.name = `exercise-${exercise_number}`;
-
-    let selected_option = document.createElement("option");
-    selected_option.innerText = "select exercise";
-    select.appendChild(selected_option);
 
     for (const id in list_of_exercises) {
         let option = document.createElement("option");
