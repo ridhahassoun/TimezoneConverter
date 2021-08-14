@@ -7,6 +7,7 @@
 {% block content %}
     <h4>Previous Workouts</h4>
     <div class="list-group">
+        <p>Select a workout to view from the list</p>
         {% for workout in workouts %}
         <a href="/workout/{{ workout[0] }}" class="list-group-item list-group-item-action">
             Workout {{ workout[0 ]}} on {{ workout[1] }}

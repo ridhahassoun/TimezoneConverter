@@ -64,7 +64,11 @@ function bindAddButton() {
 
 function bindCompleteButton() {
     document.getElementById("complete").addEventListener("click", (event) => {
-        document.getElementById("workout").submit();
+        if (window.confirm("Are you sure you want to complete your workout?")) {
+            document.getElementById("workout").submit();
+        } else {
+            return;
+        }
 
         event.preventDefault();
     });
