@@ -129,6 +129,24 @@ function buildExerciseForm(exercise_number) {
     let select = document.createElement("select");
     select.className = "form-select";
     select.name = `exercise-${exercise_number}`;
+    select.onchange = (event) => {
+        let exercise_choice = event.target.options[event.target.selectedIndex].value;
+        let exercise_name = list_of_exercises[exercise_choice];
+
+        let payload = {
+            "workout": exercise_name
+        };
+
+        let req = new XMLHttpRequest();
+        req.open("POST", "http://flip3.engr.oregonstate.edu:3625/");
+        req.addEventListener("load", () => {
+            let json = JSON.parse(req.responseText);
+            let description = document.getElementById(`exercise-${exercise_number}-description`);
+            description.innerText = json.description;
+        });
+        req.setRequestHeader("Content-Type", "application/json");
+        req.send(JSON.stringify(payload));
+    };
 
     for (const id in list_of_exercises) {
         let option = document.createElement("option");
@@ -140,7 +158,10 @@ function buildExerciseForm(exercise_number) {
     li.appendChild(select);
 
     let description = document.createElement("p");
+    description.className = "overflow-scroll";
+    description.style.height = "3em";
     description.id = `exercise-${exercise_number}-description`;
+    description.innerText = "The bench press, or chest press, is an upper-body weight training exercise in which the trainee presses a weight upwards while lying on a weight training bench. The exercise uses the pectoralis major, the anterior deltoids, and the triceps, among other stabilizing muscles. A barbell is generally used to hold the weight, but a pair of dumbbells can also be used."
     li.appendChild(description);
 
     let rows = document.createElement("div");
