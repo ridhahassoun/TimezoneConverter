@@ -1,13 +1,14 @@
 document.addEventListener("DOMContentLoaded", setUp);
-var exercises = {};
-var show_complete = false;
-var list_of_exercises = {};
+var exercises = {}; // Object that tracks number of exercises and number of sets per exercise
+var show_complete = false; // flag to determine whether to show complete button or not
+var list_of_exercises = {}; // populated from DB in setUp()
 
 function setUp() {
     startTimer();
     bindAddButton();
     bindCompleteButton();
 
+    // gets list of exercises in DB to update exercise select drop-down
     let req = new XMLHttpRequest();
     req.open("GET", "/list_of_exercises");
     req.addEventListener("load", () => {
@@ -25,18 +26,21 @@ function startTimer() {
     setInterval(() => {
         total_secs = Math.floor((Date.now() - start_time) / 1000);
         
-        var hr_dec = total_secs / 3600;
-        var hr = Math.floor(hr_dec);
+        // get hour
+        var hr_decimal = total_secs / 3600;
+        var hr = Math.floor(hr_decimal);
 
-        var min_dec = (hr_dec - hr) * 60;
-        var min = Math.floor(min_dec);
+        // get minutes
+        var min_decimal = (hr_decimal - hr) * 60;
+        var min = Math.floor(min_decimal);
 
-        var sec_dec = (min_dec - min) * 60;
-        var sec = Math.floor(sec_dec);
+        // get secondns
+        var sec_decimal = (min_decimal - min) * 60;
+        var sec = Math.floor(sec_decimal);
 
         header = document.getElementById("header");
         header.innerText = `${String(hr).padStart(2, '0')}:${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
-        document.getElementById("duration").value = total_secs;
+        document.getElementById("duration").value = total_secs; // update hidden input field
     }, 1000);
 }
 
@@ -47,11 +51,13 @@ function bindAddButton() {
 
         document.querySelector("ul").appendChild(buildExerciseForm(number_of_exercises + 1));
 
+        // hides guiding text once first exercise added
         var begin = document.getElementById("begin");
         if (begin.style.visibility != "hidden") {
             begin.style.visibility = "hidden";
         }
 
+        // shows complete button once first exercise addeed
         if (!show_complete) {
             let complete_button = document.getElementById("complete");
             complete_button.className = complete_button.className.replace("d-none", "d-inline-block");
@@ -64,6 +70,7 @@ function bindAddButton() {
 
 function bindCompleteButton() {
     document.getElementById("complete").addEventListener("click", (event) => {
+        // confirmation dialog
         if (window.confirm("Are you sure you want to complete your workout?")) {
             document.getElementById("workout").submit();
         } else {
@@ -75,14 +82,18 @@ function bindCompleteButton() {
 }
 
 function bindList() {
+    // allows dynamically added elements to actually have actions associated with
+    // them
     document.getElementById("exercises").addEventListener("click", (event) => {
         let target = event.target;
 
         if (target.tagName != "A") {
+            // if not a link, we don't care
             return;
         }
 
         if (target.name == "delete_set") {
+            // delete particular set
             let row = target.parentElement.parentElement;
             row.parentElement.removeChild(row);
 
@@ -91,13 +102,16 @@ function bindList() {
             return;
         }
 
+        // convoluted way to get exercise number
         let which_exercise = target.parentElement.parentElement.firstChild.name;
         which_exercise = which_exercise.split("-")[1];
 
         if (target.name == "add_set") {
+            // generate set row
             let rows = document.getElementById(`exercise-${which_exercise}-sets`);
             rows.appendChild(buildSetRow(which_exercise, exercises[which_exercise] + 1));
 
+            // update number of sets for that exercise
             exercises[which_exercise] = rows.children.length;
 
             event.preventDefault();
@@ -106,11 +120,13 @@ function bindList() {
         }
 
         if (target.name == "delete_exercise") {
+            // delete exercise from UI and from dict
             let li = target.parentElement.parentElement;
             li.parentElement.removeChild(li);
 
             delete exercises[which_exercise];
 
+            // update UI elements if no exercises present
             if (Object.keys(exercises).length == 0) {
                 document.getElementById("begin").style.visibility = "visible";
 
@@ -203,56 +219,56 @@ function buildExerciseForm(exercise_number) {
 }
 
 function buildSetRow(exercise_number, set_number) {
-        let row = document.createElement("div");
-        row.className = "row g-1";
+    let row = document.createElement("div");
+    row.className = "row g-1";
 
-        let reps_col = document.createElement("div");
-        reps_col.className = "col input-group mb-3";
+    let reps_col = document.createElement("div");
+    reps_col.className = "col input-group mb-3";
 
-        let reps_input = document.createElement("input");
-        reps_input.type = "number";
-        reps_input.min = "0";
-        reps_input.className = "form-control";
-        reps_input.name = `reps-${exercise_number}-${set_number}`;
+    let reps_input = document.createElement("input");
+    reps_input.type = "number";
+    reps_input.min = "0";
+    reps_input.className = "form-control";
+    reps_input.name = `reps-${exercise_number}-${set_number}`;
 
-        let reps_span = document.createElement("span");
-        reps_span.className = "input-group-text";
-        reps_span.innerText = "reps";
+    let reps_span = document.createElement("span");
+    reps_span.className = "input-group-text";
+    reps_span.innerText = "reps";
 
-        reps_col.appendChild(reps_input);
-        reps_col.appendChild(reps_span);
+    reps_col.appendChild(reps_input);
+    reps_col.appendChild(reps_span);
 
-        let weight_col = document.createElement("div");
-        weight_col.className = "col input-group mb-3";
+    let weight_col = document.createElement("div");
+    weight_col.className = "col input-group mb-3";
 
-        let weight_input = document.createElement("input");
-        weight_input.type = "number";
-        weight_input.min = "0";
-        weight_input.className = "form-control";
-        weight_input.name = `weight-${exercise_number}-${set_number}`;
+    let weight_input = document.createElement("input");
+    weight_input.type = "number";
+    weight_input.min = "0";
+    weight_input.className = "form-control";
+    weight_input.name = `weight-${exercise_number}-${set_number}`;
 
-        let weight_span = document.createElement("span");
-        weight_span.className = "input-group-text";
-        weight_span.innerText = "lbs";
+    let weight_span = document.createElement("span");
+    weight_span.className = "input-group-text";
+    weight_span.innerText = "lbs";
 
-        weight_col.appendChild(weight_input);
-        weight_col.appendChild(weight_span);
+    weight_col.appendChild(weight_input);
+    weight_col.appendChild(weight_span);
 
-        let delete_col = document.createElement("div");
-        delete_col.className = "col-1 mb-3";
+    let delete_col = document.createElement("div");
+    delete_col.className = "col-1 mb-3";
 
-        let delete_set_button = document.createElement("a");
-        delete_set_button.className = "btn btn-outline-danger";
-        delete_set_button.href = "#";
-        delete_set_button.role = "buttton";
-        delete_set_button.name = "delete_set";
-        delete_set_button.innerText = "x";
+    let delete_set_button = document.createElement("a");
+    delete_set_button.className = "btn btn-outline-danger";
+    delete_set_button.href = "#";
+    delete_set_button.role = "buttton";
+    delete_set_button.name = "delete_set";
+    delete_set_button.innerText = "x";
 
-        delete_col.appendChild(delete_set_button);
+    delete_col.appendChild(delete_set_button);
 
-        row.appendChild(reps_col);
-        row.appendChild(weight_col);
-        row.appendChild(delete_col);
+    row.appendChild(reps_col);
+    row.appendChild(weight_col);
+    row.appendChild(delete_col);
 
-        return row;
+    return row;
 }

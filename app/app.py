@@ -23,6 +23,8 @@ def workout_new():
 
 @app.route("/list_of_exercises")
 def list_of_exercises():
+    """Provides list of exercises to client-side JavaScript to update exercisee
+    dropdown."""
     cursor = database.get_db().cursor()
     cursor.execute("SELECT * FROM Exercises")
     result = cursor.fetchall()
@@ -47,16 +49,19 @@ def save_workout():
         workout_id = cursor.lastrowid
         parsed_data.pop("duration")
 
+        # go through each exercise and add to appropriate table
         for exercise in parsed_data:
             exercise_data = parsed_data[exercise]
             exercise_id = exercise_data[0]
             cursor.execute("INSERT INTO Workout_Exercise(workout_id, exercise_id) "
                            "VALUES(%s, %s)", (workout_id, exercise_id))
 
+            # go through each set and add to Sets
             for set in exercise_data[1]:
                 cursor.execute("INSERT INTO Sets(weight, reps, workout_id, exercise_id) "
                                "VALUES(%s, %s, %s, %s)", (set[0], set[1], workout_id, exercise_id))
 
+            # commit queries
             database.get_db().commit()
 
         return redirect(url_for("view_workout", id=workout_id))
@@ -135,13 +140,16 @@ def parse(form_data):
 
 
 def convert_secs_to_human_readable_time(seconds):
-    hr_dec = seconds / 3600
-    hr = floor(hr_dec)
+    # get hour
+    hr_decimal = seconds / 3600
+    hr = floor(hr_decimal)
 
-    min_dec = (hr_dec - hr) * 60
-    mins = floor(min_dec)
+    # get minutes
+    min_decimal = (hr_decimal - hr) * 60
+    mins = floor(min_decimal)
 
-    sec_dec = (min_dec - mins) * 60
-    sec = floor(sec_dec)
+    # get seconds
+    sec_decimal = (min_decimal - mins) * 60
+    sec = floor(sec_decimal)
 
     return ("{:02}".format(hr), "{:02}".format(mins), "{:02}".format(sec))
